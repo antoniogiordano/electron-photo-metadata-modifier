@@ -10,7 +10,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     ipcRenderer.once("actionReply", function (event, response) {
-      alert(JSON.stringify(response));
+      alert(response);
     });
   }, []);
 

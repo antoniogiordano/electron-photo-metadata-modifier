@@ -1,9 +1,10 @@
 const electron = require("electron");
-const { dialog, ipcMain } = require("electron");
+const { ipcMain } = require("electron");
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const path = require("path");
 const isDev = require("electron-is-dev");
+const { openFileFromFolder } = require("./electron-src/actions");
 
 let mainWindow;
 
@@ -26,19 +27,10 @@ const createWindow = () => {
   );
   mainWindow.on("closed", () => (mainWindow = null));
 
-  ipcMain.on("invokeAction", (event, arg) => {
-    dialog
-      .showOpenDialog(mainWindow, {
-        properties: ["openFile", "openDirectory"],
-      })
-      .then((result) => {
-        console.log(result.canceled);
-        console.log(result.filePaths);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    event.reply("actionReply", "pong");
+  ipcMain.on("reduxRequest", (event, arg) => {
+    openFileFromFolder(event, mainWindow)
+      .then(console.log)
+      .catch(console.error);
   });
 };
 
